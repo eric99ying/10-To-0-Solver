@@ -7,6 +7,7 @@ current number.
 """
 STARTING_NUM = 10
 
+# keep track of the game over state of each position
 cache = [-1] * (STARTING_NUM + 1)
 # keep track of remoteness
 remote_cache = [-1] * (STARTING_NUM + 1)
@@ -64,36 +65,31 @@ def solve(p: int):
 			int: 1 for loss, 0 for win
 			int: remoteness
 	"""
+	# already exists in cache
 	if cache[p] != -1:
 		return (cache[p], remote_cache[p])
 
+	# if current position is game over state
 	if game_over(p):
 		cache[p] = 1
 		remote_cache[p] = 0
 		return (1, 0)
 
+	# figure out outcomes of next possible moves
 	possible_moves = generate_moves(p)
 	new_p = [do_move(p, m) for m in possible_moves]
 	outcomes = [solve(np) for np in new_p]
 	outcomes_w = [x for x in outcomes if x[0] == 0]
 	outcomes_l = [x for x in outcomes if x[0] == 1]
-	# print("_________")
-	# print("p: ", p)
-	# print("new p: ", new_p)
-	# print("outcomes: ", outcomes)
-	# print("outcomes w: ", outcomes_w)
-	# print("outcomes l: ", outcomes_l)
-	# print("cache: ", cache)
 
+	# if losing state exists
 	if outcomes_l:
 		cache[p] = 0
 		remote_cache[p] = 1 + min(outcomes_l, key=lambda x: x[1])[1]
-		# print("WIN POSITION")
 		return (cache[p], remote_cache[p])
 
 	cache[p] = 1
 	remote_cache[p] = 1 + max(outcomes_w, key=lambda x: x[1])[1]
-	# print("LOSS POSITION")
 	return (cache[p], remote_cache[p])
 
 
@@ -101,6 +97,8 @@ if __name__ == "__main__":
 	#print(solve(1))
 	
 	solve(10)
+	print("1 is lose, 0 is win!")
+	print("Position, Win/Lose, Remoteness")
 	for i in range(len(cache)):
 		print(i, ": ", cache[i], ": ", remote_cache[i])
 
