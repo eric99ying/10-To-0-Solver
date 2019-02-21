@@ -5,7 +5,7 @@ Solves a game of 10 to 0. The goal of the game is to be the first person to say 
 The player alternates turns. Each turn, a player can choose to either say a number one less or two less than the 
 current number. 
 """
-STARTING_NUM = 50
+STARTING_NUM = 10
 
 # keep track of the game over state of each position
 cache = [-1] * (STARTING_NUM + 1)
@@ -96,7 +96,7 @@ def solve(p: int):
 if __name__ == "__main__":
 	#print(solve(1))
 	
-	solve(STARTING_NUM)
+	solve(10)
 	print("Position, Win/Lose, Remoteness")
 	for i in range(len(cache)):
 		if cache[i]:
