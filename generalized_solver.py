@@ -38,17 +38,19 @@ def solve(p: int):
 		visited[element] = True
 		succesors = generate_moves(element)
 		for suc in succesors:
-			back_pointers[suc].append(element)
+			if element not in back_pointers[suc]:
+				back_pointers[suc].append(element)
 			children_number[element] += 1
-			if not visited(suc):
+			if not visited[suc]:
 				dfs_fringe.append(suc)
 
 
 	# Solve the game
-	fringe = [(p, LOSS)]
+	fringe = [(0, LOSS)]
+	cache[0] = LOSS
 	visited = [False for i in range(STARTING_NUM + 1)]
 
-`   # Continue until the fringe is empty, pop out the first element and set visited to True
+    # Continue until the fringe is empty
 	while len(fringe) != 0:
 		element_pair = fringe.pop(0)
 		element = element_pair[0]
@@ -58,17 +60,19 @@ def solve(p: int):
 		# If that element was a losing position, set any parent to a winning position.
 		if status == LOSS:
 			parents = back_pointers[element]
+			print("element ", element, " parents ", parents)
 			for par in parents:
 				cache[par] = WIN
-				if not visited(par):
+				if not visited[par]:
 					fringe.append((par, WIN))
 		elif status == WIN:
 			parents = back_pointers[element]
+			print("element ", element, " parents ", parents)
 			for par in parents:
 				children_number[par] -= 1
 				if children_number[par] == 0:
 					cache[par] = LOSS
-					if not visited(par):
+					if not visited[par]:
 						fringe.append((par, LOSS))
 
 
@@ -83,7 +87,7 @@ def solve(p: int):
 if __name__ == "__main__":
 	
 	solve(STARTING_NUM)
-	print("Position, Win/Lose, Remoteness")
+	print("Position, Win/Lose")
 	for i in range(len(cache)):
 		if cache[i] == WIN:
 			print(i, ": ", "WIN")
